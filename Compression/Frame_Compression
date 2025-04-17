@@ -1,1 +1,42 @@
+#include "frame_array.h"
+
+void compressFrameRLE(const uint8_t input[64][64]);  // Function declaration
+
+void setup() {
+  Serial.begin(115200);
+  while (!Serial);  // Wait for PC serial connection
+
+  compressFrameRLE(frame);
+}
+
+void loop() {
+  // Empty loop, only compress once in setup()
+}
+
+void compressFrameRLE(const uint8_t input[64][64]) {
+  uint8_t last_value = input[0][0];
+  uint8_t run_length = 1;
+
+  Serial.println("Compressed Frame: [value, run_length]");
+
+  for (int i = 0; i < 64; ++i) {
+    for (int j = (i == 0 ? 1 : 0); j < 64; ++j) {
+      uint8_t current = input[i][j];
+      if (current == last_value && run_length < 255) {
+        run_length++;
+      } else {
+        Serial.print(last_value);
+        Serial.print(",");
+        Serial.println(run_length);
+        last_value = current;
+        run_length = 1;
+      }
+    }
+  }
+
+  // Final output for last run
+  Serial.print(last_value);
+  Serial.print(",");
+  Serial.println(run_length);
+}
 
